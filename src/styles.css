@@ -1,0 +1,333 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ */
+/*  Brand palette (lagoon / coastal) — single source of truth          */
+/*  Flat only. No gradients.                                          */
+/* ------------------------------------------------------------------ */
+:root {
+  --ink: #14302f;
+  --ink-soft: #5c726e;
+  --lagoon: #1f7a73;
+  --lagoon-deep: #176b65;
+  --lagoon-bright: #4fb8b2;
+  --lagoon-tint: #e9f4f2;
+  --palm: #2f6a4a;
+  --sand: #eef4f0;
+  --foam: #f6faf8;
+  --surface: #ffffff;
+  --line: #e1eae7;
+  --sale: #c2410c;
+  --warn: #b45309;
+  --info: #2c7cb2;
+  --success: #2f6a4a;
+
+  /* shadcn semantic mapping (kept so existing ui/* components work) */
+  --background: var(--foam);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--lagoon);
+  --primary-foreground: #ffffff;
+  --secondary: var(--sand);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sand);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--lagoon-tint);
+  --accent-foreground: var(--lagoon-deep);
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--lagoon);
+  --radius: 0.75rem;
+
+  --chart-1: #1f7a73;
+  --chart-2: #2f6a4a;
+  --chart-3: #4fb8b2;
+  --chart-4: #c2410c;
+  --chart-5: #2c7cb2;
+}
+
+.dark {
+  --ink: #e8f0ee;
+  --ink-soft: #9bb3ae;
+  --lagoon: #56c9c1;
+  --lagoon-deep: #9fe7df;
+  --lagoon-bright: #6ed6ce;
+  --lagoon-tint: #16352f;
+  --palm: #6ec89a;
+  --sand: #122321;
+  --foam: #0e1a19;
+  --surface: #122321;
+  --line: #233733;
+  --sale: #fb923c;
+  --warn: #fbbf24;
+  --info: #5ea3d4;
+  --success: #6ec89a;
+
+  --background: var(--foam);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--lagoon);
+  --primary-foreground: #0e1a19;
+  --secondary: var(--sand);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sand);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--lagoon-tint);
+  --accent-foreground: var(--lagoon-deep);
+  --destructive: #f87171;
+  --destructive-foreground: #0e1a19;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--lagoon);
+
+  --chart-1: #56c9c1;
+  --chart-2: #6ec89a;
+  --chart-3: #6ed6ce;
+  --chart-4: #fb923c;
+  --chart-5: #5ea3d4;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Tailwind theme tokens                                              */
+/* ------------------------------------------------------------------ */
+@theme inline {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-lagoon: var(--lagoon);
+  --color-lagoon-deep: var(--lagoon-deep);
+  --color-lagoon-bright: var(--lagoon-bright);
+  --color-lagoon-tint: var(--lagoon-tint);
+  --color-palm: var(--palm);
+  --color-sand: var(--sand);
+  --color-foam: var(--foam);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-sale: var(--sale);
+  --color-warn: var(--warn);
+  --color-info: var(--info);
+  --color-success: var(--success);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Base                                                               */
+/* ------------------------------------------------------------------ */
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  background-color: var(--foam);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--lagoon) 22%, transparent);
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+code {
+  font-size: 0.9em;
+  border: 1px solid var(--line);
+  background: var(--sand);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--ring) 60%, transparent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Utilities                                                          */
+/* ------------------------------------------------------------------ */
+.page-wrap {
+  width: min(1200px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.display-title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+.card-surface {
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.hairline {
+  border-color: var(--line);
+}
+
+/* Subtle entrance animation for page/section content */
+.rise-in {
+  animation: rise-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fade-in 500ms ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Marquee for announcement bar / logo strip */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+[dir='rtl'] .animate-marquee {
+  animation-direction: reverse;
+}
+
+/* Hide scrollbars on horizontal sliders while keeping scroll */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Image zoom on hover for product cards */
+.zoom-frame {
+  overflow: hidden;
+}
+.zoom-img {
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.zoom-frame:hover .zoom-img {
+  transform: scale(1.045);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+.animate-accordion-down {
+  animation: accordion-down 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.animate-accordion-up {
+  animation: accordion-up 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
