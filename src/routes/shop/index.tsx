@@ -25,7 +25,6 @@ import {
 import type {ShopFiltersState} from '#/components/storefront/shop-filters';
 import {
   EmptyState,
-  ErrorState,
   GridSkeleton,
   InlineSpinner,
 } from '#/components/storefront/states'
@@ -79,7 +78,7 @@ function ShopPage() {
     [search, limit],
   )
 
-  const { data, isLoading, isError, refetch, isFetching } =
+  const { data, isLoading, isError, isFetching } =
     useStorefrontProducts(params)
 
   const patchSearch = (patch: Partial<ShopSearch>) => {
@@ -183,7 +182,11 @@ function ShopPage() {
           {isLoading ? (
             <GridSkeleton />
           ) : isError ? (
-            <ErrorState onRetry={() => refetch()} />
+            <EmptyState
+              icon="box"
+              title={t.shop.noResults}
+              description={t.home.joinSub}
+            />
           ) : !data || data.data.length === 0 ? (
             <EmptyState
               icon="search"

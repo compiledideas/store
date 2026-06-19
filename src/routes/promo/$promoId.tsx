@@ -5,7 +5,7 @@ import { ArrowLeftIcon } from 'lucide-react'
 
 import { ProductGrid } from '#/components/storefront/product-grid'
 import { Button } from '#/components/ui/button'
-import { EmptyState, ErrorState, Spinner } from '#/components/storefront/states'
+import { EmptyState, Spinner } from '#/components/storefront/states'
 import { useT } from '#/lib/i18n'
 
 export const Route = createFileRoute('/promo/$promoId')({
@@ -18,12 +18,19 @@ export const Route = createFileRoute('/promo/$promoId')({
 function PromoDetailPage() {
   const { promoId } = Route.useParams()
   const t = useT()
-  const { data: promos, isLoading, isError, refetch } = useStorefrontPromos()
+  const { data: promos, isLoading, isError } = useStorefrontPromos()
 
   const promo = promos?.find((p) => p.id === promoId)
 
   if (isLoading) return <Spinner />
-  if (isError) return <ErrorState onRetry={() => refetch()} />
+  if (isError)
+    return (
+      <EmptyState
+        icon="box"
+        title={t.shop.noResults}
+        description={t.home.joinSub}
+      />
+    )
   if (!promo)
     return (
       <EmptyState

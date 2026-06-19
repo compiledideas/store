@@ -28,7 +28,6 @@ import {
 import type {ShopFiltersState} from '#/components/storefront/shop-filters';
 import {
   EmptyState,
-  ErrorState,
   GridSkeleton,
 } from '#/components/storefront/states'
 import { useT, interpolate  } from '#/lib/i18n'
@@ -81,7 +80,7 @@ function CategoryPage() {
     [search, limit],
   )
 
-  const { data, isLoading, isError, refetch } =
+  const { data, isLoading, isError } =
     useStorefrontCategoryProducts(categoryId, params)
 
   const category = categories?.find((c) => c.id === categoryId)
@@ -177,7 +176,11 @@ function CategoryPage() {
           {isLoading ? (
             <GridSkeleton />
           ) : isError ? (
-            <ErrorState onRetry={() => refetch()} />
+            <EmptyState
+              icon="box"
+              title={t.shop.noResults}
+              description={t.home.joinSub}
+            />
           ) : !data || data.data.length === 0 ? (
             <EmptyState
               icon="box"

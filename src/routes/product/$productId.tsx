@@ -29,7 +29,6 @@ import { Rail } from '#/components/storefront/rail'
 import { ProductCard } from '#/components/storefront/product-card'
 import {
   EmptyState,
-  ErrorState,
   Spinner,
 } from '#/components/storefront/states'
 import {
@@ -60,7 +59,6 @@ function ProductPage() {
     data: product,
     isLoading,
     isError,
-    refetch,
   } = useStorefrontProduct(productId)
 
   const [variantId, setVariantId] = useState<number | undefined>()
@@ -75,7 +73,7 @@ function ProductPage() {
 
   if (isLoading) return <Spinner />
   if (isError)
-    return <ErrorState onRetry={() => refetch()} message={t.states.error} />
+    return <EmptyState icon="box" title={t.shop.noResults} description={t.home.joinSub} />
   if (!product)
     return (
       <EmptyState
