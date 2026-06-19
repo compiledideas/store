@@ -144,7 +144,12 @@ function ProductPage() {
       />
     )
 
-  const images = allImages(product)
+  const images = useMemo(() => {
+    if (variant?.images?.length) {
+      return variant.images.map((i) => ({ url: i.url, alt: i.alt }))
+    }
+    return (product.images ?? []).map((i) => ({ url: i.url, alt: i.alt }))
+  }, [product, variant])
   const needsVariant = (product.variants?.length ?? 0) > 0
   const needsSubVariant = !!variant && (variant.subVariants?.length ?? 0) > 0
   const selectionValid =
@@ -182,6 +187,7 @@ function ProductPage() {
 
       <div className="grid gap-10 lg:grid-cols-2">
         <ImageGallery
+          key={variant?.id ?? 'none'}
           images={images}
           alt={product.name}
           className="lg:sticky lg:top-28 lg:self-start"

@@ -12,6 +12,7 @@ import { Button } from '#/components/ui/button'
 import { EmptyState, ErrorState, Spinner } from '#/components/storefront/states'
 import { useLocale, useT, localized } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
+import { Markdown } from '#/components/storefront/markdown'
 
 export const Route = createFileRoute('/faq')({
   head: () => ({
@@ -81,7 +82,11 @@ function FaqPage() {
               return (
                 <AccordionItem key={faq.id} value={String(faq.id)}>
                   <AccordionTrigger>{q}</AccordionTrigger>
-                  <AccordionContent>{a}</AccordionContent>
+                  <AccordionContent>
+                    <div className="prose prose-sm prose-stone max-w-none dark:prose-invert">
+                      <Markdown content={a} />
+                    </div>
+                  </AccordionContent>
                 </AccordionItem>
               )
             })}

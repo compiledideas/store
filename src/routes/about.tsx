@@ -9,6 +9,7 @@ import { SectionHeading } from '#/components/storefront/section-heading'
 import { ErrorState, Spinner } from '#/components/storefront/states'
 import { useLocale, useT, localized } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
+import { Markdown } from '#/components/storefront/markdown'
 
 export const Route = createFileRoute('/about')({
   head: () => ({
@@ -65,8 +66,8 @@ function AboutPage() {
           <ErrorState onRetry={() => refetch()} />
         ) : (
           content && (
-            <article className="prose prose-stone max-w-none whitespace-pre-line text-base leading-relaxed text-muted-foreground dark:prose-invert">
-              {content}
+            <article className="prose prose-stone max-w-none dark:prose-invert">
+              <Markdown content={content} />
             </article>
           )
         )}
