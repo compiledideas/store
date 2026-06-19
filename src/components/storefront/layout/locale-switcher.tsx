@@ -1,7 +1,7 @@
 import { CheckIcon, GlobeIcon } from 'lucide-react'
 
-import { LOCALES, useLocale  } from '#/lib/i18n'
-import type {Locale} from '#/lib/i18n';
+import { LOCALES, useLocale } from '#/lib/i18n'
+import type { Locale } from '#/lib/i18n';
 import {
   Select,
   SelectContent,
@@ -21,7 +21,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         <SelectTrigger
           size="sm"
           aria-label="Language"
-          className="gap-1.5 border-transparent bg-transparent px-2 text-sm font-semibold text-foreground hover:bg-accent"
+          className="gap-2 bg-transparent px-2 text-sm font-semibold text-foreground hover:bg-accent"
         >
           <GlobeIcon className="size-4 text-muted-foreground" />
           <SelectValue />
@@ -31,9 +31,9 @@ export function LocaleSwitcher({ className }: { className?: string }) {
             <SelectItem key={l.code} value={l.code}>
               <span className="flex items-center gap-2">
                 <span className="w-14">{l.label}</span>
-                {l.code === locale && (
+                {/* {l.code === locale && (
                   <CheckIcon className="size-3.5 text-lagoon-deep" />
-                )}
+                )} */}
               </span>
             </SelectItem>
           ))}
