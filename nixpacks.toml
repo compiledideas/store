@@ -1,0 +1,8 @@
+[phases.build]
+cmds = ["pnpm build"]
+
+[start]
+cmd = "node .output/server/index.mjs"
+
+[variables]
+NIXPACKS_SPA_CADDY = "false"
