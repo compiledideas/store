@@ -15,8 +15,29 @@ import {
   Spinner,
 } from '#/components/storefront/states'
 import { useT } from '#/lib/i18n'
+import { APP_TITLE, SITE_URL } from '#/env'
 
-export const Route = createFileRoute('/stores')({ component: StoresPage })
+export const Route = createFileRoute('/stores')({
+  head: () => ({
+    meta: [
+      { title: `Our Stores — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'Visit our physical stores. Find store locations, working hours, and contact information.',
+      },
+      { property: 'og:title', content: `Our Stores — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'Visit our physical stores. Find store locations, working hours, and contact information.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/stores` },
+    ],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/stores` }],
+  }),
+  component: StoresPage,
+})
 
 function StoresPage() {
   const t = useT()

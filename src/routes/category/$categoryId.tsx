@@ -31,6 +31,7 @@ import {
   GridSkeleton,
 } from '#/components/storefront/states'
 import { useT, interpolate  } from '#/lib/i18n'
+import { APP_TITLE } from '#/env'
 import { formatCount } from '#/lib/format'
 
 const searchSchema = z.object({
@@ -54,6 +55,22 @@ export const Route = createFileRoute('/category/$categoryId')({
     }),
   },
   validateSearch: searchSchema,
+  head: () => ({
+    meta: [
+      { title: `Category — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'Browse products in this category. Find the perfect item from our curated collection.',
+      },
+      { property: 'og:title', content: `Category — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'Browse products in this category.',
+      },
+    ],
+  }),
   component: CategoryPage,
 })
 

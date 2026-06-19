@@ -15,9 +15,30 @@ import {
   resolveUnitPrice,
 } from '#/lib/format'
 import { useT } from '#/lib/i18n'
+import { APP_TITLE, SITE_URL } from '#/env'
 import { FREE_SHIP_THRESHOLD, SHIPPING_FEE } from '#/lib/cart-config'
 
-export const Route = createFileRoute('/cart')({ component: CartPage })
+export const Route = createFileRoute('/cart')({
+  head: () => ({
+    meta: [
+      { title: `Cart — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'Review your shopping cart before checkout.',
+      },
+      { property: 'og:title', content: `Cart — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'Review your shopping cart before checkout.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/cart` },
+    ],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/cart` }],
+  }),
+  component: CartPage,
+})
 
 function CartPage() {
   const t = useT()

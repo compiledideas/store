@@ -5,7 +5,6 @@ import { cn } from '#/lib/utils'
 export function Price({
   value,
   oldValue,
-  currency = 'USD',
   className,
   size = 'md',
   showFrom = false,
@@ -13,7 +12,6 @@ export function Price({
 }: {
   value: number
   oldValue?: number | null
-  currency?: string
   className?: string
   size?: 'sm' | 'md' | 'lg'
   showFrom?: boolean
@@ -33,7 +31,7 @@ export function Price({
         </span>
       )}
       <span className={cn('font-bold text-ink', sizes[size])}>
-        {formatPrice(value, currency)}
+        {formatPrice(value)}
       </span>
       {oldValue && oldValue > value && (
         <span
@@ -42,7 +40,7 @@ export function Price({
             size === 'lg' ? 'text-sm' : 'text-xs',
           )}
         >
-          {formatPrice(oldValue, currency)}
+          {formatPrice(oldValue)}
         </span>
       )}
     </span>

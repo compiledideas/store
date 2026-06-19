@@ -19,11 +19,32 @@ import { Separator } from '#/components/ui/separator'
 import { EmptyState, InlineSpinner } from '#/components/storefront/states'
 import { formatPrice } from '#/lib/format'
 import { useT } from '#/lib/i18n'
+import { APP_TITLE, SITE_URL } from '#/env'
 import { toast } from '#/lib/toast'
 import { FREE_SHIP_THRESHOLD, SHIPPING_FEE } from '#/lib/cart-config'
 import { cn } from '#/lib/utils'
 
-export const Route = createFileRoute('/checkout')({ component: CheckoutPage })
+export const Route = createFileRoute('/checkout')({
+  head: () => ({
+    meta: [
+      { title: `Checkout — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'Complete your order with cash on delivery. Secure checkout process.',
+      },
+      { property: 'og:title', content: `Checkout — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'Complete your order with cash on delivery.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/checkout` },
+    ],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/checkout` }],
+  }),
+  component: CheckoutPage,
+})
 
 interface FormState {
   clientName: string

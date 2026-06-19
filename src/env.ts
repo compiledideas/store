@@ -14,6 +14,7 @@ export const env = createEnv({
 
   client: {
     VITE_APP_TITLE: z.string().min(1).optional(),
+    VITE_SITE_URL: z.string().url().optional(),
     VITE_STOREFRONT_URL: z.string().min(1).optional(),
     VITE_STOREFRONT_API_KEY: z.string().optional(),
   },
@@ -50,4 +51,5 @@ export const STOREFRONT_CONFIG = {
   apiKey: env.VITE_STOREFRONT_API_KEY ?? 'demo-public-key',
 }
 
+export const SITE_URL = env.VITE_SITE_URL ?? 'https://kidoo.compiledideas.dev'
 export const APP_TITLE = env.VITE_APP_TITLE ?? 'Rackvise Store'

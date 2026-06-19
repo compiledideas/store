@@ -11,8 +11,29 @@ import {
 import { Button } from '#/components/ui/button'
 import { EmptyState, ErrorState, Spinner } from '#/components/storefront/states'
 import { useLocale, useT, localized } from '#/lib/i18n'
+import { APP_TITLE, SITE_URL } from '#/env'
 
-export const Route = createFileRoute('/faq')({ component: FaqPage })
+export const Route = createFileRoute('/faq')({
+  head: () => ({
+    meta: [
+      { title: `FAQ — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'Find answers to frequently asked questions about ordering, shipping, payments, and more.',
+      },
+      { property: 'og:title', content: `FAQ — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'Find answers to frequently asked questions about ordering, shipping, payments, and more.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/faq` },
+    ],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/faq` }],
+  }),
+  component: FaqPage,
+})
 
 function FaqPage() {
   const t = useT()
@@ -65,6 +86,27 @@ function FaqPage() {
               )
             })}
           </Accordion>
+        )}
+
+        {active.length > 0 && (
+          <script
+            type="application/ld+json"
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'FAQPage',
+                mainEntity: active.map((faq) => ({
+                  '@type': 'Question',
+                  name: localized(faq, 'question', locale),
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: localized(faq, 'answer', locale),
+                  },
+                })),
+              }),
+            }}
+          />
         )}
       </div>
     </div>

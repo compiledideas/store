@@ -7,11 +7,28 @@ import { ProductGrid } from '#/components/storefront/product-grid'
 import { Button } from '#/components/ui/button'
 import { EmptyState, Spinner } from '#/components/storefront/states'
 import { useT } from '#/lib/i18n'
+import { APP_TITLE } from '#/env'
 
 export const Route = createFileRoute('/promo/$promoId')({
   params: {
     parse: (raw) => ({ promoId: z.coerce.number().parse(raw.promoId) }),
   },
+  head: () => ({
+    meta: [
+      { title: `Offer — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'View promotion details and browse discounted products.',
+      },
+      { property: 'og:title', content: `Offer — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'View promotion details and browse discounted products.',
+      },
+    ],
+  }),
   component: PromoDetailPage,
 })
 

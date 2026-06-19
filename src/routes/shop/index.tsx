@@ -29,6 +29,7 @@ import {
   InlineSpinner,
 } from '#/components/storefront/states'
 import { useT, interpolate  } from '#/lib/i18n'
+import { APP_TITLE, SITE_URL } from '#/env'
 import { formatCount } from '#/lib/format'
 
 const PAGE_SIZE = 12
@@ -50,6 +51,24 @@ type ShopSearch = z.infer<typeof searchSchema>
 
 export const Route = createFileRoute('/shop/')({
   validateSearch: searchSchema,
+  head: () => ({
+    meta: [
+      { title: `Shop — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'Browse our full collection of products. Filter by category, price, gender, and more to find exactly what you need.',
+      },
+      { property: 'og:title', content: `Shop — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'Browse our full collection of products. Filter by category, price, gender, and more.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/shop` },
+    ],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/shop` }],
+  }),
   component: ShopPage,
 })
 

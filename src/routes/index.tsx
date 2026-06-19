@@ -17,8 +17,29 @@ import { ProductCard } from '#/components/storefront/product-card'
 import { Rail } from '#/components/storefront/rail'
 import { Button } from '#/components/ui/button'
 import { useT } from '#/lib/i18n'
+import { APP_TITLE, SITE_URL } from '#/env'
 
-export const Route = createFileRoute('/')({ component: HomePage })
+export const Route = createFileRoute('/')({
+  head: () => ({
+    meta: [
+      { title: APP_TITLE },
+      {
+        name: 'description',
+        content:
+          'Shop curated essentials with cash on delivery. Browse our collection of featured products, best sellers, and exclusive offers.',
+      },
+      { property: 'og:title', content: APP_TITLE },
+      {
+        property: 'og:description',
+        content:
+          'Shop curated essentials with cash on delivery. Browse our collection of featured products, best sellers, and exclusive offers.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/` },
+    ],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/` }],
+  }),
+  component: HomePage,
+})
 
 function HomePage() {
   const t = useT()

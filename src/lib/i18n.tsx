@@ -29,7 +29,7 @@ export const dictionaries = {
     brand: {
       tagline: 'Curated essentials, delivered with care',
       announcement:
-        'Free shipping on orders over $80 — Cash on delivery available',
+        'Free shipping on orders over 80 DH — Cash on delivery available',
     },
     nav: {
       home: 'Home',
@@ -182,15 +182,15 @@ export const dictionaries = {
       madeWith: 'Built with the Rackvise Storefront SDK',
     },
     common: {
-      currency: 'USD',
-      locale: 'en-US',
+      currency: 'MAD',
+      locale: 'en-MA',
     },
   },
   fr: {
     brand: {
       tagline: "L'essentiel, livré avec soin",
       announcement:
-        'Livraison gratuite dès 80 $ — Paiement à la livraison disponible',
+        'Livraison gratuite dès 80 DH — Paiement à la livraison disponible',
     },
     nav: {
       home: 'Accueil',
@@ -344,14 +344,14 @@ export const dictionaries = {
       madeWith: 'Construit avec le SDK Rackvise Storefront',
     },
     common: {
-      currency: 'USD',
-      locale: 'fr-FR',
+      currency: 'MAD',
+      locale: 'fr-MA',
     },
   },
   ar: {
     brand: {
       tagline: 'أساسيات مختارة بعناية، تُسلَّم بعناية',
-      announcement: 'شحن مجاني للطلبات فوق ٨٠$ — الدفع عند الاستلام متاح',
+      announcement: 'شحن مجاني للطلبات فوق ٨٠ د.م. — الدفع عند الاستلام متاح',
     },
     nav: {
       home: 'الرئيسية',
@@ -504,8 +504,8 @@ export const dictionaries = {
       madeWith: 'بُني باستخدام SDK Rackvise Storefront',
     },
     common: {
-      currency: 'USD',
-      locale: 'ar',
+      currency: 'MAD',
+      locale: 'ar-MA',
     },
   },
 }

@@ -8,8 +8,29 @@ import { StatsBand } from '#/components/storefront/stats-band'
 import { SectionHeading } from '#/components/storefront/section-heading'
 import { ErrorState, Spinner } from '#/components/storefront/states'
 import { useLocale, useT, localized } from '#/lib/i18n'
+import { APP_TITLE, SITE_URL } from '#/env'
 
-export const Route = createFileRoute('/about')({ component: AboutPage })
+export const Route = createFileRoute('/about')({
+  head: () => ({
+    meta: [
+      { title: `About — ${APP_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'Learn more about our store. Curated essentials, delivered with care.',
+      },
+      { property: 'og:title', content: `About — ${APP_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'Learn more about our store. Curated essentials, delivered with care.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/about` },
+    ],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/about` }],
+  }),
+  component: AboutPage,
+})
 
 function AboutPage() {
   const t = useT()

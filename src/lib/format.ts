@@ -54,17 +54,15 @@ export function discountPercent(price: number, oldPrice?: number | null): number
   return Math.round(((oldPrice - price) / oldPrice) * 100)
 }
 
-/** Format a money amount. Keeps currency stable regardless of UI locale. */
-export function formatPrice(amount: number, currency = 'USD'): string {
+/** Format a money amount in Moroccan Dirham (DH). */
+export function formatPrice(amount: number): string {
   try {
     return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(amount)
+    }).format(amount) + ' DH'
   } catch {
-    return `$${amount.toFixed(2)}`
+    return `${amount.toFixed(2)} DH`
   }
 }
 

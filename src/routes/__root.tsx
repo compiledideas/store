@@ -14,11 +14,11 @@ import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 
 import { StorefrontApp } from '#/lib/storefront'
-import { LocaleProvider } from '#/lib/i18n'
+import { LocaleProvider, LOCALES } from '#/lib/i18n'
 import { UiProvider } from '#/lib/ui-store'
 import { StoreShell } from '#/components/storefront/layout/store-shell'
 import { Button } from '#/components/ui/button'
-import { APP_TITLE } from '#/env'
+import { APP_TITLE, SITE_URL } from '#/env'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -36,9 +36,25 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         name: 'description',
         content:
-          'A modern storefront built with the Rackvise Storefront SDK.',
+          'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.',
       },
       { name: 'theme-color', content: '#1f7a73' },
+      { property: 'og:title', content: APP_TITLE },
+      {
+        property: 'og:description',
+        content:
+          'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.',
+      },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: SITE_URL },
+      { property: 'og:image', content: `${SITE_URL}/logo512.png` },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: APP_TITLE },
+      {
+        name: 'twitter:description',
+        content:
+          'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.',
+      },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
@@ -48,6 +64,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         href: 'https://fonts.gstatic.com',
         crossOrigin: 'anonymous',
       },
+      { rel: 'canonical', href: SITE_URL },
+      ...LOCALES.map((l) => ({
+        rel: 'alternate' as const,
+        href: `${SITE_URL}`,
+        hrefLang: l.code,
+      })),
+      { rel: 'alternate', href: `${SITE_URL}`, hrefLang: 'x-default' },
     ],
   }),
   notFoundComponent: NotFound,
@@ -75,6 +98,21 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             { name: 'Tanstack Router', render: <TanStackRouterDevtoolsPanel /> },
             TanStackQueryDevtools,
           ]}
+        />
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: APP_TITLE,
+              url: SITE_URL,
+              logo: `${SITE_URL}/logo512.png`,
+              description:
+                'Curated essentials, delivered with care.',
+            }),
+          }}
         />
         <Scripts />
       </body>
