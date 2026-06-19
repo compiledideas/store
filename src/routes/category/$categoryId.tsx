@@ -31,8 +31,9 @@ import {
   GridSkeleton,
 } from '#/components/storefront/states'
 import { useT, interpolate  } from '#/lib/i18n'
-import { APP_TITLE } from '#/env'
+import { APP_TITLE, SITE_URL } from '#/env'
 import { formatCount } from '#/lib/format'
+import { getStorefrontClient } from '#/lib/storefront-client'
 
 const searchSchema = z.object({
   sort: z
@@ -55,22 +56,63 @@ export const Route = createFileRoute('/category/$categoryId')({
     }),
   },
   validateSearch: searchSchema,
-  head: () => ({
-    meta: [
-      { title: `Category — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Browse products in this category. Find the perfect item from our curated collection.',
-      },
-      { property: 'og:title', content: `Category — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Browse products in this category.',
-      },
-    ],
-  }),
+  loader: async ({ params, context }) => {
+    try {
+      const client = getStorefrontClient()
+      const apiKey = client.getApiKey()
+      const categories = await context.queryClient.ensureQueryData({
+        queryKey: ['storefront', apiKey, 'categories'],
+        queryFn: () => client.getCategories(),
+      })
+      const category = categories.find((c) => c.id === params.categoryId) ?? null
+      return { category }
+    } catch {
+      return { category: null }
+    }
+  },
+  head: ({ loaderData, params }) => {
+    const category = loaderData?.category
+    return {
+      meta: [
+        {
+          title: category
+            ? `${category.name} — ${APP_TITLE}`
+            : `Category — ${APP_TITLE}`,
+        },
+        {
+          name: 'description',
+          content:
+            category?.description ||
+            `Browse products in ${category?.name || 'this category'}. Find the perfect item from our curated collection.`,
+        },
+        {
+          property: 'og:title',
+          content: category
+            ? `${category.name} — ${APP_TITLE}`
+            : `Category — ${APP_TITLE}`,
+        },
+        {
+          property: 'og:description',
+          content:
+            category?.description ||
+            `Browse products in ${category?.name || 'this category'}.`,
+        },
+        ...(category?.imageUrl
+          ? [{ property: 'og:image' as const, content: category.imageUrl }]
+          : []),
+        {
+          property: 'og:url',
+          content: `${SITE_URL}/category/${params.categoryId}`,
+        },
+      ],
+      links: [
+        {
+          rel: 'canonical',
+          href: `${SITE_URL}/category/${params.categoryId}`,
+        },
+      ],
+    }
+  },
   component: CategoryPage,
 })
 

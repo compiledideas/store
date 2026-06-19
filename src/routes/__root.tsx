@@ -105,12 +105,31 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
-              '@type': 'Organization',
-              name: APP_TITLE,
-              url: SITE_URL,
-              logo: `${SITE_URL}/logo512.png`,
-              description:
-                'Curated essentials, delivered with care.',
+              '@graph': [
+                {
+                  '@type': 'Organization',
+                  name: APP_TITLE,
+                  url: SITE_URL,
+                  logo: `${SITE_URL}/logo512.png`,
+                  description:
+                    'Curated essentials, delivered with care.',
+                },
+                {
+                  '@type': 'WebSite',
+                  name: APP_TITLE,
+                  url: SITE_URL,
+                  description:
+                    'Curated essentials, delivered with care.',
+                  potentialAction: {
+                    '@type': 'SearchAction',
+                    target: {
+                      '@type': 'EntryPoint',
+                      urlTemplate: `${SITE_URL}/shop?q={search_term_string}`,
+                    },
+                    'query-input': 'required name=search_term_string',
+                  },
+                },
+              ],
             }),
           }}
         />

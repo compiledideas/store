@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   Link,
   createFileRoute,
@@ -41,28 +41,68 @@ import { useUi } from '#/lib/ui-store'
 import { useT } from '#/lib/i18n'
 import { toast } from '#/lib/toast'
 import { APP_TITLE, SITE_URL } from '#/env'
+import { getStorefrontClient } from '#/lib/storefront-client'
 
 export const Route = createFileRoute('/product/$productId')({
   params: {
     parse: (raw) => ({ productId: z.coerce.number().parse(raw.productId) }),
   },
-  head: () => ({
-    meta: [
-      { title: `Product — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'View product details, check availability, and add to your cart.',
-      },
-      { property: 'og:title', content: `Product — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'View product details, check availability, and add to your cart.',
-      },
-      { property: 'og:type', content: 'product' },
-    ],
-  }),
+  loader: async ({ params, context }) => {
+    try {
+      const client = getStorefrontClient()
+      const apiKey = client.getApiKey()
+      const product = await context.queryClient.ensureQueryData({
+        queryKey: ['storefront', apiKey, 'product', params.productId],
+        queryFn: () => client.getProduct(params.productId),
+      })
+      return { product }
+    } catch {
+      return { product: null }
+    }
+  },
+  head: ({ loaderData, params }) => {
+    const product = loaderData?.product
+    const images = product ? allImages(product) : []
+    const img = images[0]?.url
+    return {
+      meta: [
+        {
+          title: product
+            ? `${product.name} — ${APP_TITLE}`
+            : `Product — ${APP_TITLE}`,
+        },
+        {
+          name: 'description',
+          content:
+            product?.description ||
+            product?.name ||
+            'View product details, check availability, and add to your cart.',
+        },
+        {
+          property: 'og:title',
+          content: product
+            ? `${product.name} — ${APP_TITLE}`
+            : `Product — ${APP_TITLE}`,
+        },
+        {
+          property: 'og:description',
+          content:
+            product?.description ||
+            product?.name ||
+            'View product details, check availability, and add to your cart.',
+        },
+        { property: 'og:type', content: 'product' },
+        ...(img ? [{ property: 'og:image' as const, content: img }] : []),
+        {
+          property: 'og:url',
+          content: `${SITE_URL}/product/${params.productId}`,
+        },
+      ],
+      links: [
+        { rel: 'canonical', href: `${SITE_URL}/product/${params.productId}` },
+      ],
+    }
+  },
   component: ProductPage,
 })
 
@@ -129,22 +169,6 @@ function ProductPage() {
   }
 
   const category = product.categories?.[0]?.category
-
-  useEffect(() => {
-    document.title = `${product.name} — ${APP_TITLE}`
-    const metaDesc = document.querySelector('meta[name="description"]')
-    if (metaDesc) metaDesc.setAttribute('content', product.description || product.name)
-    const ogTitle = document.querySelector('meta[property="og:title"]')
-    if (ogTitle) ogTitle.setAttribute('content', `${product.name} — ${APP_TITLE}`)
-    const ogDesc = document.querySelector('meta[property="og:description"]')
-    if (ogDesc) ogDesc.setAttribute('content', product.description || product.name)
-    const ogUrl = document.querySelector('meta[property="og:url"]')
-    if (ogUrl) ogUrl.setAttribute('content', `${SITE_URL}/product/${productId}`)
-    const ogImage = document.querySelector('meta[property="og:image"]')
-    if (ogImage && images[0]?.url) ogImage.setAttribute('content', images[0].url)
-    const canonical = document.querySelector('link[rel="canonical"]')
-    if (canonical) canonical.setAttribute('href', `${SITE_URL}/product/${productId}`)
-  }, [product, productId, images])
 
   return (
     <div className="page-wrap py-8">
@@ -276,6 +300,21 @@ function ProductPage() {
         </div>
       </div>
 
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: category?.name ?? 'Shop', item: category ? `${SITE_URL}/category/${category.id}` : `${SITE_URL}/shop` },
+              { '@type': 'ListItem', position: 3, name: product.name },
+            ],
+          }),
+        }}
+      />
       <script
         type="application/ld+json"
         suppressHydrationWarning

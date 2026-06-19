@@ -7,28 +7,69 @@ import { ProductGrid } from '#/components/storefront/product-grid'
 import { Button } from '#/components/ui/button'
 import { EmptyState, Spinner } from '#/components/storefront/states'
 import { useT } from '#/lib/i18n'
-import { APP_TITLE } from '#/env'
+import { APP_TITLE, SITE_URL } from '#/env'
+import { getStorefrontClient } from '#/lib/storefront-client'
 
 export const Route = createFileRoute('/promo/$promoId')({
   params: {
     parse: (raw) => ({ promoId: z.coerce.number().parse(raw.promoId) }),
   },
-  head: () => ({
-    meta: [
-      { title: `Offer — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'View promotion details and browse discounted products.',
-      },
-      { property: 'og:title', content: `Offer — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'View promotion details and browse discounted products.',
-      },
-    ],
-  }),
+  loader: async ({ params, context }) => {
+    try {
+      const client = getStorefrontClient()
+      const apiKey = client.getApiKey()
+      const promos = await context.queryClient.ensureQueryData({
+        queryKey: ['storefront', apiKey, 'promos'],
+        queryFn: () => client.getActivePromos(),
+      })
+      const promo = promos.find((p) => p.id === params.promoId) ?? null
+      return { promo }
+    } catch {
+      return { promo: null }
+    }
+  },
+  head: ({ loaderData, params }) => {
+    const promo = loaderData?.promo
+    return {
+      meta: [
+        {
+          title: promo
+            ? `${promo.title} — ${APP_TITLE}`
+            : `Offer — ${APP_TITLE}`,
+        },
+        {
+          name: 'description',
+          content:
+            promo?.subTitle ||
+            promo?.title ||
+            'View promotion details and browse discounted products.',
+        },
+        {
+          property: 'og:title',
+          content: promo
+            ? `${promo.title} — ${APP_TITLE}`
+            : `Offer — ${APP_TITLE}`,
+        },
+        {
+          property: 'og:description',
+          content:
+            promo?.subTitle ||
+            promo?.title ||
+            'View promotion details and browse discounted products.',
+        },
+        ...(promo?.imageUrl
+          ? [{ property: 'og:image' as const, content: promo.imageUrl }]
+          : []),
+        {
+          property: 'og:url',
+          content: `${SITE_URL}/promo/${params.promoId}`,
+        },
+      ],
+      links: [
+        { rel: 'canonical', href: `${SITE_URL}/promo/${params.promoId}` },
+      ],
+    }
+  },
   component: PromoDetailPage,
 })
 
