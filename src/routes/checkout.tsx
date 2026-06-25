@@ -440,7 +440,7 @@ function SuccessView({ order }: { order: OrderResponse }) {
             label={t.checkout.orderTotal}
             value={formatPrice(order.totalAmount)}
           />
-          <Row label={t.product.sku} value={order.clientName} />
+          <Row label={t.checkout.name} value={order.clientName} />
           <Row label={t.checkout.shipping} value={order.shippingAddress} />
         </dl>
 
