@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 import { SlidersHorizontalIcon, SearchIcon } from 'lucide-react'
@@ -77,6 +77,11 @@ function ShopPage() {
   const search = Route.useSearch()
   const navigate = useNavigate()
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [searchInput, setSearchInput] = useState(search.q ?? '')
+
+  useEffect(() => {
+    setSearchInput(search.q ?? '')
+  }, [search.q])
 
   const { data: categories } = useStorefrontCategories()
 
@@ -107,8 +112,10 @@ function ShopPage() {
   const patchFilters = (patch: Partial<ShopFiltersState>) =>
     patchSearch({ ...patch, show: PAGE_SIZE })
 
-  const resetFilters = () =>
+  const resetFilters = () => {
+    setSearchInput('')
     patchSearch({
+      q: undefined,
       categoryId: undefined,
       minPrice: undefined,
       maxPrice: undefined,
@@ -116,8 +123,11 @@ function ShopPage() {
       ageGroup: undefined,
       show: PAGE_SIZE,
     })
+  }
 
-  const onSearch = (q: string) => patchSearch({ q: q || undefined })
+  const submitSearch = () => {
+    patchSearch({ q: searchInput.trim() || undefined, show: PAGE_SIZE })
+  }
 
   const filtersValue: ShopFiltersState = {
     categoryId: search.categoryId,
@@ -161,13 +171,14 @@ function ShopPage() {
           <SearchIcon className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
-            defaultValue={search.q}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             placeholder={t.shop.searchPlaceholder}
             aria-label={t.shop.searchPlaceholder}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') onSearch((e.target as HTMLInputElement).value)
+              if (e.key === 'Enter') submitSearch()
             }}
-            onBlur={(e) => onSearch(e.target.value)}
+            onBlur={submitSearch}
             className="h-10 rounded-full bg-sand/70 ps-9"
           />
         </div>
