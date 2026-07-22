@@ -28,7 +28,7 @@ export function ImageGallery({
 
   useEffect(() => {
     setIndex(0)
-  }, [count])
+  }, [images])
 
   if (count === 0) {
     return (
