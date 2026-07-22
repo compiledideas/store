@@ -147,10 +147,14 @@ function CheckoutPage() {
     }
   }
 
-  const onApplyCoupon = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!couponInput.trim()) return
-    applyCoupon(couponInput.trim())
+  const handleApplyCoupon = async () => {
+    const code = couponInput.trim()
+    if (!code) return
+    try {
+      await applyCoupon(code)
+    } catch {
+      // Handled internally by hook exposing couponError
+    }
   }
 
   return (
@@ -159,11 +163,9 @@ function CheckoutPage() {
         {t.checkout.title}
       </h1>
 
-      <form
-        onSubmit={onSubmit}
-        className="grid gap-10 lg:grid-cols-[1fr_22rem]"
-      >
-        <div className="space-y-8">
+      <div className="grid gap-10 lg:grid-cols-[1fr_22rem]">
+        {/* Main Details Form */}
+        <form id="checkout-form" onSubmit={onSubmit} className="space-y-8">
           {/* Contact */}
           <Section title={t.checkout.contact}>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -226,7 +228,7 @@ function CheckoutPage() {
             </div>
           </Section>
 
-          {/* Payment (COD only) */}
+          {/* Payment (COD) */}
           <Section title={t.checkout.payment}>
             <div className="flex items-start gap-3 rounded-xl border border-lagoon/30 bg-lagoon-tint/50 p-4">
               <span className="grid size-9 shrink-0 place-items-center rounded-full bg-lagoon-deep text-background">
@@ -245,9 +247,9 @@ function CheckoutPage() {
               </div>
             </div>
           </Section>
-        </div>
+        </form>
 
-        {/* Summary */}
+        {/* Summary Sidebar */}
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className="space-y-4 rounded-2xl border border-line bg-card p-6">
             <h2 className="text-lg font-semibold text-foreground">
@@ -273,23 +275,32 @@ function CheckoutPage() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={onApplyCoupon} className="flex gap-2">
-                <Input
-                  value={couponInput}
-                  onChange={(e) => setCouponInput(e.target.value)}
-                  placeholder={t.checkout.coupon}
-                  aria-label={t.checkout.coupon}
-                  className="h-9 uppercase"
-                />
-                <Button
-                  type="submit"
-                  variant="outline"
-                  size="sm"
-                  disabled={isApplyingCoupon}
-                >
-                  {isApplyingCoupon ? <InlineSpinner className="size-4" /> : t.actions.apply}
-                </Button>
-              </form>
+              <div className="space-y-1.5">
+                <div className="flex gap-2">
+                  <Input
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleApplyCoupon()
+                      }
+                    }}
+                    placeholder={t.checkout.coupon}
+                    aria-label={t.checkout.coupon}
+                    className="h-9 uppercase"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isApplyingCoupon}
+                    onClick={handleApplyCoupon}
+                  >
+                    {isApplyingCoupon ? <InlineSpinner className="size-4" /> : t.actions.apply}
+                  </Button>
+                </div>
+              </div>
             )}
             {couponError && (
               <p className="text-xs font-medium text-destructive" role="alert">
@@ -327,6 +338,7 @@ function CheckoutPage() {
 
             <Button
               type="submit"
+              form="checkout-form"
               size="lg"
               className="w-full rounded-full"
               disabled={isSubmittingOrder}
@@ -344,7 +356,7 @@ function CheckoutPage() {
             </p>
           </div>
         </aside>
-      </form>
+      </div>
     </div>
   )
 }
