@@ -46,16 +46,7 @@ function SheetContent({
   side?: 'left' | 'right' | 'start' | 'end'
   onOpenChange?: (open: boolean) => void
 }) {
-  const resolvedSide =
-    side === 'start'
-      ? typeof document !== 'undefined' && document.documentElement.dir === 'rtl'
-        ? 'right'
-        : 'left'
-      : side === 'end'
-        ? typeof document !== 'undefined' && document.documentElement.dir === 'rtl'
-          ? 'left'
-          : 'right'
-        : side
+  const isStart = side === 'left' || side === 'start'
   return (
     <>
       <SheetOverlay />
@@ -65,9 +56,9 @@ function SheetContent({
           aria-describedby={undefined}
           className={cn(
             'fixed top-0 z-50 flex h-svh w-full max-w-md flex-col border-border bg-background shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-300',
-            resolvedSide === 'right'
-              ? 'right-0 border-s data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right'
-              : 'left-0 border-e data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left',
+            isStart
+              ? 'start-0 border-e data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left'
+              : 'end-0 border-s data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
             className,
           )}
           {...props}
