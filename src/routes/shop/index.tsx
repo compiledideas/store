@@ -16,17 +16,17 @@ import {
   SheetHeader,
   SheetTitle,
 } from '#/components/ui/sheet'
+import { Pagination } from '#/components/storefront/pagination'
 import { ProductGrid } from '#/components/storefront/product-grid'
 import { SortSelect } from '#/components/storefront/sort-select'
 import {
   ShopFilters
-  
+   
 } from '#/components/storefront/shop-filters'
 import type {ShopFiltersState} from '#/components/storefront/shop-filters';
 import {
   EmptyState,
   GridSkeleton,
-  InlineSpinner,
 } from '#/components/storefront/states'
 import { useT, interpolate  } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
@@ -44,7 +44,7 @@ const searchSchema = z.object({
   maxPrice: z.number().optional(),
   gender: z.string().optional(),
   ageGroup: z.string().optional(),
-  show: z.number().optional(),
+  page: z.number().optional(),
 })
 
 type ShopSearch = z.infer<typeof searchSchema>
@@ -85,7 +85,8 @@ function ShopPage() {
 
   const { data: categories } = useStorefrontCategories()
 
-  const limit = search.show ?? PAGE_SIZE
+  const page = search.page ?? 1
+  const offset = (page - 1) * PAGE_SIZE
 
   const params: GetProductsParams = useMemo(
     () => ({
@@ -96,13 +97,13 @@ function ShopPage() {
       maxPrice: search.maxPrice,
       gender: search.gender,
       ageGroup: search.ageGroup,
-      limit,
-      offset: 0,
+      limit: PAGE_SIZE,
+      offset,
     }),
-    [search, limit],
+    [search, offset],
   )
 
-  const { data, isLoading, isError, isFetching } =
+  const { data, isLoading, isError } =
     useStorefrontProducts(params)
 
   const patchSearch = (patch: Partial<ShopSearch>) => {
@@ -110,7 +111,7 @@ function ShopPage() {
   }
 
   const patchFilters = (patch: Partial<ShopFiltersState>) =>
-    patchSearch({ ...patch, show: PAGE_SIZE })
+    patchSearch({ ...patch, page: 1 })
 
   const resetFilters = () => {
     setSearchInput('')
@@ -121,12 +122,12 @@ function ShopPage() {
       maxPrice: undefined,
       gender: undefined,
       ageGroup: undefined,
-      show: PAGE_SIZE,
+      page: 1,
     })
   }
 
   const submitSearch = () => {
-    patchSearch({ q: searchInput.trim() || undefined, show: PAGE_SIZE })
+    patchSearch({ q: searchInput.trim() || undefined, page: 1 })
   }
 
   const filtersValue: ShopFiltersState = {
@@ -139,8 +140,7 @@ function ShopPage() {
 
   const activeCategory = categories?.find((c) => c.id === search.categoryId)
   const total = data?.pagination.total ?? 0
-  const shown = data?.data.length ?? 0
-  const hasMore = data?.pagination.hasMore ?? false
+  const totalPages = Math.ceil(total / PAGE_SIZE)
 
   const filterContent = (
     <ShopFilters
@@ -234,25 +234,16 @@ function ShopPage() {
               <div className="mt-10 flex flex-col items-center gap-3">
                 <p className="text-xs text-muted-foreground">
                   {interpolate(t.shop.showing, {
-                    from: '1',
-                    to: formatCount(shown),
+                    from: formatCount(offset + 1),
+                    to: formatCount(offset + data.data.length),
                     total: formatCount(total),
                   })}
                 </p>
-                {hasMore && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full"
-                    disabled={isFetching}
-                    onClick={() =>
-                      patchSearch({ show: limit + PAGE_SIZE })
-                    }
-                  >
-                    {isFetching ? <InlineSpinner /> : null}
-                    {t.shop.loadMore}
-                  </Button>
-                )}
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={(p) => patchSearch({ page: p })}
+                />
               </div>
             </>
           )}

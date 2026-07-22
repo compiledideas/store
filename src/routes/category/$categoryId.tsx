@@ -19,11 +19,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from '#/components/ui/sheet'
+import { Pagination } from '#/components/storefront/pagination'
 import { ProductGrid } from '#/components/storefront/product-grid'
 import { SortSelect } from '#/components/storefront/sort-select'
 import {
   ShopFilters
-  
+   
 } from '#/components/storefront/shop-filters'
 import type {ShopFiltersState} from '#/components/storefront/shop-filters';
 import {
@@ -43,7 +44,7 @@ const searchSchema = z.object({
   maxPrice: z.number().optional(),
   gender: z.string().optional(),
   ageGroup: z.string().optional(),
-  show: z.number().optional(),
+  page: z.number().optional(),
 })
 
 type CategorySearch = z.infer<typeof searchSchema>
@@ -124,7 +125,8 @@ function CategoryPage() {
   const [filtersOpen, setFiltersOpen] = useState(false)
   const { data: categories } = useStorefrontCategories()
 
-  const limit = search.show ?? PAGE_SIZE
+  const page = search.page ?? 1
+  const offset = (page - 1) * PAGE_SIZE
 
   const params: GetCategoryProductsParams = useMemo(
     () => ({
@@ -133,10 +135,10 @@ function CategoryPage() {
       maxPrice: search.maxPrice,
       gender: search.gender,
       ageGroup: search.ageGroup,
-      limit,
-      offset: 0,
+      limit: PAGE_SIZE,
+      offset,
     }),
-    [search, limit],
+    [search, offset],
   )
 
   const { data, isLoading, isError } =
@@ -151,7 +153,7 @@ function CategoryPage() {
     })
 
   const patchFilters = (p: Partial<ShopFiltersState>) =>
-    patch({ ...p, show: PAGE_SIZE })
+    patch({ ...p, page: 1 })
 
   const resetFilters = () =>
     patch({
@@ -159,7 +161,7 @@ function CategoryPage() {
       maxPrice: undefined,
       gender: undefined,
       ageGroup: undefined,
-      show: PAGE_SIZE,
+      page: 1,
     })
 
   const filtersValue: ShopFiltersState = {
@@ -180,7 +182,7 @@ function CategoryPage() {
   )
 
   const total = data?.pagination.total ?? 0
-  const hasMore = data?.pagination.hasMore ?? false
+  const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
     <div className="page-wrap py-10">
@@ -254,18 +256,20 @@ function CategoryPage() {
           ) : (
             <>
               <ProductGrid items={data.data} />
-              {hasMore && (
-                <div className="mt-10 flex justify-center">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full"
-                    onClick={() => patch({ show: limit + PAGE_SIZE })}
-                  >
-                    {t.shop.loadMore}
-                  </Button>
-                </div>
-              )}
+              <div className="mt-10 flex flex-col items-center gap-3">
+                <p className="text-xs text-muted-foreground">
+                  {interpolate(t.shop.showing, {
+                    from: formatCount(offset + 1),
+                    to: formatCount(offset + data.data.length),
+                    total: formatCount(total),
+                  })}
+                </p>
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={(p) => patch({ page: p })}
+                />
+              </div>
             </>
           )}
         </div>
