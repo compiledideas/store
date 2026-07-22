@@ -154,7 +154,9 @@ function ProductPage() {
     if (variant?.images?.length) {
       return variant.images.map((i) => ({ url: i.url, alt: i.alt }))
     }
-    return (product.images ?? []).map((i) => ({ url: i.url, alt: i.alt }))
+    const productImages = (product.images ?? []).map((i) => ({ url: i.url, alt: i.alt }))
+    if (productImages.length > 0) return productImages
+    return allImages(product)
   }, [product, variant])
   const needsVariant = (product.variants?.length ?? 0) > 0
   const needsSubVariant = !!variant && (variant.subVariants?.length ?? 0) > 0
