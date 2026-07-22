@@ -1,5 +1,5 @@
-import { useState  } from 'react'
-import type {ReactNode} from 'react';
+import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { ImageIcon } from 'lucide-react'
 
 import { cn } from '#/lib/utils'
@@ -23,6 +23,12 @@ export function ProductImage({
 }) {
   const [loaded, setLoaded] = useState(false)
   const [errored, setErrored] = useState(false)
+
+  useEffect(() => {
+    setLoaded(false)
+    setErrored(false)
+  }, [src])
+
   const showFallback = !src || errored
 
   return (
