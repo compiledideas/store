@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Link,
   createFileRoute,
@@ -122,6 +122,12 @@ function ProductPage() {
   const [variantId, setVariantId] = useState<number | undefined>()
   const [subVariantId, setSubVariantId] = useState<number | undefined>()
   const [qty, setQty] = useState(1)
+
+  useEffect(() => {
+    setVariantId(undefined)
+    setSubVariantId(undefined)
+    setQty(1)
+  }, [productId])
 
   const variant = useMemo(
     () => product?.variants?.find((v) => v.id === variantId),
