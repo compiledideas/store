@@ -22,12 +22,14 @@ export function ShopFilters({
   value,
   onChange,
   onReset,
+  hideCategoryFilter = false,
   className,
 }: {
   categories: Category[]
   value: ShopFiltersState
   onChange: (next: Partial<ShopFiltersState>) => void
   onReset: () => void
+  hideCategoryFilter?: boolean
   className?: string
 }) {
   const t = useT()
@@ -48,28 +50,30 @@ export function ShopFilters({
         </button>
       </div>
 
-      <Separator />
-
-      {/* Category */}
-      <FilterGroup label={t.shop.category}>
-        <ul className="space-y-1.5">
-          <FilterRadio
-            label={t.actions.viewAll}
-            checked={!value.categoryId}
-            onChange={() => onChange({ categoryId: undefined })}
-          />
-          {categories.map((c) => (
-            <FilterRadio
-              key={c.id}
-              label={c.name}
-              checked={value.categoryId === c.id}
-              onChange={() => onChange({ categoryId: c.id })}
-            />
-          ))}
-        </ul>
-      </FilterGroup>
-
-      <Separator />
+      {/* Category Filter - only shown when enabled */}
+      {!hideCategoryFilter && (
+        <>
+          <Separator />
+          <FilterGroup label={t.shop.category}>
+            <ul className="space-y-1.5">
+              <FilterRadio
+                label={t.actions.viewAll}
+                checked={!value.categoryId}
+                onChange={() => onChange({ categoryId: undefined })}
+              />
+              {categories.map((c) => (
+                <FilterRadio
+                  key={c.id}
+                  label={c.name}
+                  checked={value.categoryId === c.id}
+                  onChange={() => onChange({ categoryId: c.id })}
+                />
+              ))}
+            </ul>
+          </FilterGroup>
+          <Separator />
+        </>
+      )}
 
       {/* Price */}
       <FilterGroup label={t.shop.price}>

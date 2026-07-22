@@ -172,6 +172,7 @@ function CategoryPage() {
   const filterContent = (
     <ShopFilters
       categories={[]}
+      hideCategoryFilter
       value={filtersValue}
       onChange={patchFilters}
       onReset={resetFilters}
