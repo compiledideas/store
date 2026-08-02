@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
-    "@rackvise/storefront-sdk": "^0.2.0",
+    "@rackvise/storefront-sdk": "^0.4.5",
     "@t3-oss/env-core": "^0.13.10",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/match-sorter-utils": "latest",
@@ -70,7 +70,8 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "lightningcss"
-    ]
+    ],
+    "overrides": {}
   },
   "packageManager": "pnpm@10.33.2+sha512.a90faf6feeab71ad6c6e57f94e0fe1a12f5dcc22cd754db40ae9593eb6a3e0b6b12e3540218bb37ae083404b1f2ce6db2a4121e979829b4aff94b99f49da1cf8"
 }
