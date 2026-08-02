@@ -3,4 +3,4 @@ Allow: /
 Disallow: /checkout
 Disallow: /cart
 
-Sitemap: https://kidoo.compiledideas.dev/sitemap.xml
+Sitemap: https://rackvise.com/sitemap.xml

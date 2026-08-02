@@ -47,9 +47,9 @@ export const env = createEnv({
  * `VITE_STOREFRONT_API_KEY` at your own Rackvise tenant to override.
  */
 export const STOREFRONT_CONFIG = {
-  baseUrl: env.VITE_STOREFRONT_URL ?? 'https://kidoo.compiledideas.dev',
+  baseUrl: env.VITE_STOREFRONT_URL ?? 'https://rackvise.com',
   apiKey: env.VITE_STOREFRONT_API_KEY ?? 'demo-public-key',
 }
 
-export const SITE_URL = env.VITE_SITE_URL ?? 'https://kidoo.compiledideas.dev'
+export const SITE_URL = env.VITE_SITE_URL ?? 'https://rackvise.com'
 export const APP_TITLE = env.VITE_APP_TITLE ?? 'Rackvise Store'
