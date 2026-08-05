@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useStorefrontPromos } from '@rackvise/storefront-sdk'
 import { z } from 'zod'
 import { ArrowLeftIcon } from 'lucide-react'
+import { useMemo } from 'react'
 
 import { ProductGrid } from '#/components/storefront/product-grid'
 import { Button } from '#/components/ui/button'
@@ -81,6 +82,20 @@ function PromoDetailPage() {
 
   const promo = promos?.find((p) => p.id === promoId)
 
+  const mappedProducts = useMemo(() => {
+    const productsMap = new Map<number, any>()
+    for (const product of promo?.products ?? []) {
+      if (!productsMap.has(product.id)) {
+        productsMap.set(product.id, {
+          ...product,
+          oldPrice: product.price,
+          price: product.promoPrice ?? product.price,
+        })
+      }
+    }
+    return Array.from(productsMap.values())
+  }, [promo])
+
   if (isLoading) return <Spinner />
   if (isError)
     return (
@@ -96,7 +111,7 @@ function PromoDetailPage() {
         title={t.states.searchEmpty}
         action={
           <Button asChild>
-            <Link to="/promo">{t.actions.backToShop}</Link>
+            <Link to="/offers">{t.actions.backToShop}</Link>
           </Button>
         }
       />
@@ -105,7 +120,7 @@ function PromoDetailPage() {
   return (
     <div className="page-wrap py-10">
       <Link
-        to="/promo"
+        to="/offers"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeftIcon className="size-4 rtl:rotate-180" />
@@ -125,7 +140,7 @@ function PromoDetailPage() {
       </header>
 
       {promo.products.length > 0 ? (
-        <ProductGrid items={promo.products} />
+        <ProductGrid items={mappedProducts as never[]} />
       ) : (
         <EmptyState icon="box" title={t.states.searchEmpty} />
       )}

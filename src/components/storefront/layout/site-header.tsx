@@ -15,7 +15,7 @@ import { APP_TITLE } from '#/env'
 const NAV = [
   { to: '/', key: 'home' as const },
   { to: '/shop', key: 'shop' as const },
-  { to: '/promo', key: 'promos' as const },
+  { to: '/offers', key: 'promos' as const },
   { to: '/about', key: 'about' as const },
   { to: '/stores', key: 'stores' as const },
   { to: '/faq', key: 'faq' as const },

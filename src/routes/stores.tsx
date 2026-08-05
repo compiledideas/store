@@ -16,8 +16,22 @@ import {
 } from '#/components/storefront/states'
 import { useT } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
+import { getStorefrontClient } from '#/lib/storefront-client'
 
 export const Route = createFileRoute('/stores')({
+  loader: async ({ context }) => {
+    try {
+      const client = getStorefrontClient()
+      const apiKey = client.getApiKey()
+      const pointOfSells = await context.queryClient.ensureQueryData({
+        queryKey: ['storefront', apiKey, 'point-of-sells'],
+        queryFn: () => client.getPointOfSells(),
+      })
+      return { pointOfSells }
+    } catch {
+      return { pointOfSells: [] as never[] }
+    }
+  },
   head: ({ match }) => {
     const siteName = match.context.config?.name || APP_TITLE
     return {
@@ -109,7 +123,8 @@ function StoresPage() {
                       href={`mailto:${pos.email}`}
                     />
                   )}
-                  {pos.workingHours &&
+                  {typeof pos.workingHours === 'object' &&
+                    pos.workingHours &&
                     Object.keys(pos.workingHours).length > 0 && (
                       <div className="space-y-1 pt-1">
                         <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
@@ -117,15 +132,21 @@ function StoresPage() {
                           {t.stores.hours}
                         </p>
                         <ul className="space-y-0.5 text-sm text-foreground">
-                          {Object.entries(pos.workingHours).map(([day, hours]) => (
-                            <li
-                              key={day}
-                              className="flex justify-between gap-3 capitalize"
-                            >
-                              <span className="text-muted-foreground">{day}</span>
-                              <span className="font-medium">{hours}</span>
-                            </li>
-                          ))}
+                          {Object.entries(pos.workingHours).map(
+                            ([day, hours]) => (
+                              <li
+                                key={day}
+                                className="flex justify-between gap-3 capitalize"
+                              >
+                                <span className="text-muted-foreground">
+                                  {day}
+                                </span>
+                                <span className="font-medium">
+                                  {formatWorkingHours(hours)}
+                                </span>
+                              </li>
+                            ),
+                          )}
                         </ul>
                       </div>
                     )}
@@ -137,6 +158,16 @@ function StoresPage() {
       </div>
     </div>
   )
+}
+
+function formatWorkingHours(hours: unknown): string {
+  if (typeof hours === 'string') return hours
+  if (hours && typeof hours === 'object') {
+    const h = hours as { open?: string; close?: string; isOpen?: boolean }
+    if (h.open && h.close) return `${h.open} — ${h.close}`
+    if (h.open) return h.open
+  }
+  return ''
 }
 
 function Contact({

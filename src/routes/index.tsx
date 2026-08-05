@@ -99,7 +99,7 @@ function HomePage() {
             eyebrow={t.product.sale}
             title={t.home.promo}
             subtitle={t.home.promoSub}
-            viewAllTo="/promo"
+            viewAllTo="/offers"
             viewAllLabel={t.actions.viewAll}
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

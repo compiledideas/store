@@ -72,7 +72,7 @@ export function SiteFooter() {
 
         <FooterCol title={t.footer.shop}>
           <FooterLink to="/shop">{t.nav.shop}</FooterLink>
-          <FooterLink to="/promo">{t.nav.promos}</FooterLink>
+          <FooterLink to="/offers">{t.nav.promos}</FooterLink>
           <FooterLink to="/category">{t.nav.categories}</FooterLink>
         </FooterCol>
 

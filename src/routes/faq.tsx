@@ -13,8 +13,22 @@ import { EmptyState, ErrorState, Spinner } from '#/components/storefront/states'
 import { useLocale, useT, localized } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
 import { Markdown } from '#/components/storefront/markdown'
+import { getStorefrontClient } from '#/lib/storefront-client'
 
 export const Route = createFileRoute('/faq')({
+  loader: async ({ context }) => {
+    try {
+      const client = getStorefrontClient()
+      const apiKey = client.getApiKey()
+      const faqs = await context.queryClient.ensureQueryData({
+        queryKey: ['storefront', apiKey, 'faqs'],
+        queryFn: () => client.getFaqs(),
+      })
+      return { faqs }
+    } catch {
+      return { faqs: [] as never[] }
+    }
+  },
   head: ({ match }) => {
     const siteName = match.context.config?.name || APP_TITLE
     return {

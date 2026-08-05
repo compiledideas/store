@@ -57,7 +57,7 @@ export function Hero() {
               variant="outline"
               className="rounded-full"
             >
-              <Link to="/promo">{t.home.heroSecondary}</Link>
+              <Link to="/offers">{t.home.heroSecondary}</Link>
             </Button>
           </div>
 
