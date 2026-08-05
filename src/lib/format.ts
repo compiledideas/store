@@ -1,3 +1,4 @@
+import { useStorefrontConfig } from '@rackvise/storefront-sdk'
 import type { Product, ProductVariant, ProductSubVariant } from '@rackvise/storefront-sdk'
 
 /** Resolve the unit price for a cart/line item (sub-variant > variant > product). */
@@ -54,15 +55,20 @@ export function discountPercent(price: number, oldPrice?: number | null): number
   return Math.round(((oldPrice - price) / oldPrice) * 100)
 }
 
-/** Format a money amount in Moroccan Dirham (DH). */
-export function formatPrice(amount: number): string {
-  try {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount) + ' DH'
-  } catch {
-    return `${amount.toFixed(2)} DH`
+/** Format a money amount dynamically based on tenant config. */
+export function useFormatPrice() {
+  const { data: config } = useStorefrontConfig()
+  const symbol = config?.currencySymbol ?? 'DH'
+
+  return function formatPrice(amount: number): string {
+    try {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount) + ' ' + symbol
+    } catch {
+      return `${amount.toFixed(2)} ${symbol}`
+    }
   }
 }
 

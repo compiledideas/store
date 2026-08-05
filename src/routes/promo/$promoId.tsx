@@ -28,14 +28,15 @@ export const Route = createFileRoute('/promo/$promoId')({
       return { promo: null }
     }
   },
-  head: ({ loaderData, params }) => {
+  head: ({ loaderData, params, match }) => {
     const promo = loaderData?.promo
+    const siteName = match.context.config?.name || APP_TITLE
     return {
       meta: [
         {
           title: promo
-            ? `${promo.title} — ${APP_TITLE}`
-            : `Offer — ${APP_TITLE}`,
+            ? `${promo.title} — ${siteName}`
+            : `Offer — ${siteName}`,
         },
         {
           name: 'description',
@@ -47,8 +48,8 @@ export const Route = createFileRoute('/promo/$promoId')({
         {
           property: 'og:title',
           content: promo
-            ? `${promo.title} — ${APP_TITLE}`
-            : `Offer — ${APP_TITLE}`,
+            ? `${promo.title} — ${siteName}`
+            : `Offer — ${siteName}`,
         },
         {
           property: 'og:description',

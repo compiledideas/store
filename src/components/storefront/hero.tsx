@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRightIcon, ShieldCheckIcon, TruckIcon } from 'lucide-react'
 import {
+  useStorefrontConfig,
   useStorefrontHero,
   useStorefrontTopSellingProducts,
 } from '@rackvise/storefront-sdk'
@@ -13,13 +14,14 @@ import { primaryImage } from '#/lib/format'
 export function Hero() {
   const t = useT()
   const { locale } = useLocale()
+  const { data: config } = useStorefrontConfig()
   const { data: hero } = useStorefrontHero()
   const { data: top } = useStorefrontTopSellingProducts({ enabled: true })
 
-  const title = localized(hero, 'title', locale) || t.brand.tagline
+  const title = localized(hero, 'title', locale) || config?.name || t.brand.tagline
   const subtitle = localized(hero, 'subtitle', locale)
-  const badge =
-    localized(hero, 'heroBadge', locale) || t.brand.tagline
+  const badge = localized(hero, 'heroBadge', locale)
+  const announcement = localized(config, 'announcement', locale) || t.brand.announcement
 
   const heroImg = hero?.imageUrl ?? undefined
   const collage = (top ?? []).slice(0, 3)
@@ -62,7 +64,7 @@ export function Hero() {
           <ul className="flex flex-wrap gap-x-6 gap-y-3 pt-4 text-sm text-muted-foreground">
             <li className="inline-flex items-center gap-2">
               <TruckIcon className="size-4 text-lagoon-deep" />
-              {t.brand.announcement.split('—')[0]}
+              {announcement.split('—')[0]}
             </li>
             <li className="inline-flex items-center gap-2">
               <ShieldCheckIcon className="size-4 text-lagoon-deep" />

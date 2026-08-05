@@ -12,24 +12,25 @@ import { APP_TITLE, SITE_URL } from '#/env'
 import { Markdown } from '#/components/storefront/markdown'
 
 export const Route = createFileRoute('/about')({
-  head: () => ({
-    meta: [
-      { title: `About — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Learn more about our store. Curated essentials, delivered with care.',
-      },
-      { property: 'og:title', content: `About — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Learn more about our store. Curated essentials, delivered with care.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/about` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/about` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `About — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Learn more about our store. Curated essentials, delivered with care.',
+        },
+        { property: 'og:title', content: `About — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Learn more about our store. Curated essentials, delivered with care.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/about` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/about` }],
+    }
+  },
   component: AboutPage,
 })
 

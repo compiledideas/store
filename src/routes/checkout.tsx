@@ -3,6 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   useStorefrontCart,
   useStorefrontCheckout,
+  useStorefrontConfig,
 } from '@rackvise/storefront-sdk'
 import type { OrderResponse } from '@rackvise/storefront-sdk'
 import {
@@ -17,32 +18,32 @@ import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Separator } from '#/components/ui/separator'
 import { EmptyState, InlineSpinner } from '#/components/storefront/states'
-import { formatPrice } from '#/lib/format'
+import { useFormatPrice } from '#/lib/format'
 import { useT } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
 import { toast } from '#/lib/toast'
-import { FREE_SHIP_THRESHOLD, SHIPPING_FEE } from '#/lib/cart-config'
 import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/checkout')({
-  head: () => ({
-    meta: [
-      { title: `Checkout — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Complete your order with cash on delivery. Secure checkout process.',
-      },
-      { property: 'og:title', content: `Checkout — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Complete your order with cash on delivery.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/checkout` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/checkout` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `Checkout — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Complete your order with cash on delivery. Secure checkout process.',
+        },
+        { property: 'og:title', content: `Checkout — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Complete your order with cash on delivery.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/checkout` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/checkout` }],
+    }
+  },
   component: CheckoutPage,
 })
 
@@ -68,6 +69,9 @@ function CheckoutPage() {
     isSubmittingOrder,
   } = useStorefrontCheckout()
 
+  const { data: config } = useStorefrontConfig()
+  const formatPrice = useFormatPrice()
+
   const [form, setForm] = useState<FormState>({
     clientName: '',
     clientPhone: '',
@@ -81,7 +85,10 @@ function CheckoutPage() {
   )
   const [order, setOrder] = useState<OrderResponse | null>(null)
 
-  const shipping = subtotal >= FREE_SHIP_THRESHOLD ? 0 : SHIPPING_FEE
+  const freeShipThreshold = config?.freeShippingThreshold ?? 80
+  const shippingFee = config?.shippingFee ?? 6.5
+
+  const shipping = subtotal >= freeShipThreshold ? 0 : shippingFee
   const discount = activeCoupon?.discountAmount ?? 0
   const total = couponTotal + shipping
 
@@ -431,6 +438,8 @@ function Row({
 
 function SuccessView({ order }: { order: OrderResponse }) {
   const t = useT()
+  const formatPrice = useFormatPrice()
+
   return (
     <div className="page-wrap py-20">
       <div className="mx-auto flex max-w-md flex-col items-center gap-5 text-center">

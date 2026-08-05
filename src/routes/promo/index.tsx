@@ -8,24 +8,25 @@ import { useT } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
 
 export const Route = createFileRoute('/promo/')({
-  head: () => ({
-    meta: [
-      { title: `Offers — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Check out our limited-time offers and promotions. Save big on curated essentials while stocks last.',
-      },
-      { property: 'og:title', content: `Offers — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Check out our limited-time offers and promotions.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/promo` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/promo` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `Offers — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Check out our limited-time offers and promotions. Save big on curated essentials while stocks last.',
+        },
+        { property: 'og:title', content: `Offers — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Check out our limited-time offers and promotions.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/promo` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/promo` }],
+    }
+  },
   component: PromoIndexPage,
 })
 

@@ -1,23 +1,15 @@
-import { useState  } from 'react'
-import type {FormEvent} from 'react';
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import {
-  MenuIcon,
-  SearchIcon,
-  ShoppingBagIcon,
-} from 'lucide-react'
-import { useStorefrontCart } from '@rackvise/storefront-sdk'
+import { MenuIcon, SearchIcon, ShoppingBagIcon } from 'lucide-react'
+import { useStorefrontCart, useStorefrontConfig } from '@rackvise/storefront-sdk'
+import type { StorefrontConfigData } from '@rackvise/storefront-sdk'
 
 import { Button } from '#/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '#/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '#/components/ui/sheet'
 import { LocaleSwitcher } from './locale-switcher'
 import { useUi } from '#/lib/ui-store'
-import { useT } from '#/lib/i18n'
+import { localized, useLocale, useT } from '#/lib/i18n'
 import { APP_TITLE } from '#/env'
 
 const NAV = [
@@ -29,10 +21,34 @@ const NAV = [
   { to: '/faq', key: 'faq' as const },
 ]
 
+export function Logo({ url, name }: { url?: string | null; name: string }) {
+  if (url) {
+    return <img src={url} alt={name} className="h-9 w-auto object-contain" />
+  }
+  return (
+    <span className="grid size-9 place-items-center rounded-xl bg-lagoon-deep text-background">
+      <svg
+        viewBox="0 0 24 24"
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        <path d="M3 7h18l-2 11a2 2 0 0 1-2 1.7H7A2 2 0 0 1 5 18z" />
+        <path d="M8 7V6a4 4 0 0 1 8 0v1" />
+      </svg>
+    </span>
+  )
+}
+
 export function SiteHeader() {
   const t = useT()
   const { openCart, setMobileNavOpen, mobileNavOpen } = useUi()
   const { totalItems } = useStorefrontCart()
+  const { data: config } = useStorefrontConfig()
   const [query, setQuery] = useState('')
 
   const navigate = useNavigate()
@@ -41,9 +57,11 @@ export function SiteHeader() {
     navigate({ to: '/shop', search: { q: query.trim() || undefined } })
   }
 
+  const siteName = config?.name || APP_TITLE
+
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-background/85 backdrop-blur-md">
-      <AnnouncementBar />
+      <AnnouncementBar config={config} />
 
       <div className="page-wrap flex h-16 items-center gap-4">
         <button
@@ -56,9 +74,9 @@ export function SiteHeader() {
         </button>
 
         <Link to="/" className="flex items-center gap-2.5">
-          <Logo />
+          <Logo url={config?.logoUrl} name={siteName} />
           <span className="display-title hidden text-lg font-bold tracking-tight text-foreground sm:inline">
-            {APP_TITLE}
+            {siteName}
           </span>
         </Link>
 
@@ -121,6 +139,7 @@ export function SiteHeader() {
         open={mobileNavOpen}
         onOpenChange={setMobileNavOpen}
         nav={NAV}
+        config={config}
       />
     </header>
   )
@@ -144,13 +163,18 @@ function NavLink({
   )
 }
 
-function AnnouncementBar() {
+function AnnouncementBar({ config }: { config?: StorefrontConfigData }) {
   const t = useT()
+  const { locale } = useLocale()
+
+  if (config && !config.showAnnouncement) return null
+  const text = localized(config, 'announcement', locale) || t.brand.announcement
+
   return (
     <div className="bg-ink text-background">
       <div className="page-wrap flex h-9 items-center justify-center overflow-hidden">
         <p className="truncate text-center text-xs font-medium tracking-wide">
-          {t.brand.announcement}
+          {text}
         </p>
       </div>
     </div>
@@ -161,20 +185,23 @@ function MobileNav({
   open,
   onOpenChange,
   nav,
+  config,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   nav: { to: string; key: 'home' | 'shop' | 'promos' | 'about' | 'stores' | 'faq' }[]
+  config?: StorefrontConfigData
 }) {
   const t = useT()
+  const siteName = config?.name || APP_TITLE
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="start" onOpenChange={onOpenChange}>
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
-            <Logo />
+            <Logo url={config?.logoUrl} name={siteName} />
             <span className="display-title text-base font-bold">
-              {APP_TITLE}
+              {siteName}
             </span>
           </SheetTitle>
         </SheetHeader>
@@ -195,25 +222,5 @@ function MobileNav({
         </div>
       </SheetContent>
     </Sheet>
-  )
-}
-
-function Logo() {
-  return (
-    <span className="grid size-9 place-items-center rounded-xl bg-lagoon-deep text-background">
-      <svg
-        viewBox="0 0 24 24"
-        className="size-5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        <path d="M3 7h18l-2 11a2 2 0 0 1-2 1.7H7A2 2 0 0 1 5 18z" />
-        <path d="M8 7V6a4 4 0 0 1 8 0v1" />
-      </svg>
-    </span>
   )
 }

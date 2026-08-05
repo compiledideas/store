@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useStorefrontCart } from '@rackvise/storefront-sdk'
+import { useStorefrontCart, useStorefrontConfig } from '@rackvise/storefront-sdk'
 import { ArrowRightIcon, ShoppingBagIcon, Trash2Icon } from 'lucide-react'
 
 import { Button } from '#/components/ui/button'
@@ -9,34 +9,34 @@ import { Price } from '#/components/storefront/price'
 import { QuantityStepper } from '#/components/storefront/quantity-stepper'
 import { EmptyState } from '#/components/storefront/states'
 import {
-  formatPrice,
+  useFormatPrice,
   primaryImage,
   resolveStock,
   resolveUnitPrice,
 } from '#/lib/format'
 import { useT } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
-import { FREE_SHIP_THRESHOLD, SHIPPING_FEE } from '#/lib/cart-config'
 
 export const Route = createFileRoute('/cart')({
-  head: () => ({
-    meta: [
-      { title: `Cart — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Review your shopping cart before checkout.',
-      },
-      { property: 'og:title', content: `Cart — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Review your shopping cart before checkout.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/cart` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/cart` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `Cart — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Review your shopping cart before checkout.',
+        },
+        { property: 'og:title', content: `Cart — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Review your shopping cart before checkout.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/cart` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/cart` }],
+    }
+  },
   component: CartPage,
 })
 
@@ -50,6 +50,8 @@ function CartPage() {
     removeFromCart,
     clearCart,
   } = useStorefrontCart()
+  const { data: config } = useStorefrontConfig()
+  const formatPrice = useFormatPrice()
 
   if (items.length === 0) {
     return (
@@ -74,7 +76,10 @@ function CartPage() {
     )
   }
 
-  const shipping = subtotal >= FREE_SHIP_THRESHOLD ? 0 : SHIPPING_FEE
+  const freeShipThreshold = config?.freeShippingThreshold ?? 80
+  const shippingFee = config?.shippingFee ?? 6.5
+
+  const shipping = subtotal >= freeShipThreshold ? 0 : shippingFee
   const total = subtotal + shipping
 
   return (

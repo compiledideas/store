@@ -8,6 +8,7 @@ import {
   useStorefrontCart,
   useStorefrontProduct,
   useStorefrontProducts,
+  useStorefrontConfig
 } from '@rackvise/storefront-sdk'
 import {
   ArrowLeftIcon,
@@ -38,7 +39,7 @@ import {
   resolveUnitPrice,
 } from '#/lib/format'
 import { useUi } from '#/lib/ui-store'
-import { useT } from '#/lib/i18n'
+import { useT, useLocale, localized } from '#/lib/i18n'
 import { toast } from '#/lib/toast'
 import { APP_TITLE, SITE_URL } from '#/env'
 import { getStorefrontClient } from '#/lib/storefront-client'
@@ -60,16 +61,17 @@ export const Route = createFileRoute('/product/$productId')({
       return { product: null }
     }
   },
-  head: ({ loaderData, params }) => {
+  head: ({ loaderData, params, match }) => {
     const product = loaderData?.product
+    const siteName = match.context.config?.name || APP_TITLE
     const images = product ? allImages(product) : []
     const img = images[0]?.url
     return {
       meta: [
         {
           title: product
-            ? `${product.name} — ${APP_TITLE}`
-            : `Product — ${APP_TITLE}`,
+            ? `${product.name} — ${siteName}`
+            : `Product — ${siteName}`,
         },
         {
           name: 'description',
@@ -81,8 +83,8 @@ export const Route = createFileRoute('/product/$productId')({
         {
           property: 'og:title',
           content: product
-            ? `${product.name} — ${APP_TITLE}`
-            : `Product — ${APP_TITLE}`,
+            ? `${product.name} — ${siteName}`
+            : `Product — ${siteName}`,
         },
         {
           property: 'og:description',
@@ -109,9 +111,11 @@ export const Route = createFileRoute('/product/$productId')({
 function ProductPage() {
   const { productId } = Route.useParams()
   const t = useT()
+  const { locale } = useLocale()
   const { openCart } = useUi()
   const navigate = useNavigate()
   const { addToCart } = useStorefrontCart()
+  const { data: config } = useStorefrontConfig()
 
   const {
     data: product,
@@ -169,6 +173,8 @@ function ProductPage() {
   const pct = discountPercent(price, oldPrice)
   const soldOut = stock <= 0
   const canAdd = selectionValid && !soldOut
+
+  const announcement = localized(config, 'announcement', locale) || t.brand.announcement
 
   const handleAdd = (buyNow: boolean) => {
     if (!canAdd) return
@@ -275,7 +281,7 @@ function ProductPage() {
           <ul className="grid gap-2 rounded-2xl border border-line bg-sand/50 p-4 text-sm text-muted-foreground sm:grid-cols-2">
             <li className="inline-flex items-center gap-2">
               <TruckIcon className="size-4 text-lagoon-deep" />
-              {t.brand.announcement.split('—')[0]}
+              {announcement.split('—')[0]}
             </li>
             <li className="inline-flex items-center gap-2">
               <CheckCircle2Icon className="size-4 text-lagoon-deep" />
@@ -343,7 +349,7 @@ function ProductPage() {
             offers: {
               '@type': 'Offer',
               price: price,
-              priceCurrency: 'MAD',
+              priceCurrency: config?.currency ?? 'MAD',
               availability: stock > 0
                 ? 'https://schema.org/InStock'
                 : 'https://schema.org/OutOfStock',

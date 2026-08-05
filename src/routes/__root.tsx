@@ -12,6 +12,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
+import type { StorefrontConfigData } from '@rackvise/storefront-sdk'
 
 import { StorefrontApp } from '#/lib/storefront'
 import { LocaleProvider, LOCALES } from '#/lib/i18n'
@@ -19,70 +20,104 @@ import { UiProvider } from '#/lib/ui-store'
 import { StoreShell } from '#/components/storefront/layout/store-shell'
 import { Button } from '#/components/ui/button'
 import { APP_TITLE, SITE_URL } from '#/env'
+import { getStorefrontClient } from '#/lib/storefront-client'
 
 interface MyRouterContext {
   queryClient: QueryClient
+  config?: StorefrontConfigData | null
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1, viewport-fit=cover',
-      },
-      { title: APP_TITLE },
-      {
-        name: 'description',
-        content:
-          'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.',
-      },
-      { name: 'theme-color', content: '#1f7a73' },
-      { property: 'og:title', content: APP_TITLE },
-      {
-        property: 'og:description',
-        content:
-          'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.',
-      },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: SITE_URL },
-      { property: 'og:image', content: `${SITE_URL}/logo512.png` },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: APP_TITLE },
-      {
-        name: 'twitter:description',
-        content:
-          'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.',
-      },
-    ],
-    links: [
-      { rel: 'stylesheet', href: appCss },
-      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-      {
-        rel: 'preconnect',
-        href: 'https://fonts.gstatic.com',
-        crossOrigin: 'anonymous',
-      },
-      { rel: 'canonical', href: SITE_URL },
-      ...LOCALES.map((l) => ({
-        rel: 'alternate' as const,
-        href: `${SITE_URL}`,
-        hrefLang: l.code,
-      })),
-      { rel: 'alternate', href: `${SITE_URL}`, hrefLang: 'x-default' },
-    ],
-  }),
+  beforeLoad: async ({ context }) => {
+    const client = getStorefrontClient()
+    const apiKey = client.getApiKey()
+    let config: StorefrontConfigData | null = null
+    try {
+      config = await context.queryClient.ensureQueryData({
+        queryKey: ['storefront', apiKey, 'store-config'],
+        queryFn: () => client.getStoreConfig(),
+      })
+    } catch {
+      /* config stays null */
+    }
+    return { config: config as any }
+  },
+  head: ({ match }) => {
+    const config = match.context.config
+    const title = config?.name || APP_TITLE
+    const description = config?.taglineEN || 'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.'
+    const logoUrl = config?.logoUrl || `${SITE_URL}/logo512.png`
+    return {
+      meta: [
+        { charSet: 'utf-8' },
+        {
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1, viewport-fit=cover',
+        },
+        { title },
+        { name: 'description', content: description },
+        { name: 'theme-color', content: config?.primaryColor || '#1f7a73' },
+        { property: 'og:title', content: title },
+        {
+          property: 'og:description',
+          content: description,
+        },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: SITE_URL },
+        { property: 'og:image', content: logoUrl },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: title },
+        {
+          name: 'twitter:description',
+          content: description,
+        },
+      ],
+      links: [
+        { rel: 'stylesheet', href: appCss },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        {
+          rel: 'preconnect',
+          href: 'https://fonts.gstatic.com',
+          crossOrigin: 'anonymous',
+        },
+        { rel: 'canonical', href: SITE_URL },
+        ...LOCALES.map((l) => ({
+          rel: 'alternate' as const,
+          href: `${SITE_URL}`,
+          hrefLang: l.code,
+        })),
+        { rel: 'alternate', href: `${SITE_URL}`, hrefLang: 'x-default' },
+      ],
+    }
+  },
   notFoundComponent: NotFound,
   errorComponent: RootError,
   shellComponent: RootDocument,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { config } = Route.useRouteContext()
+  const title = config?.name || APP_TITLE
+  const description = config?.taglineEN || 'Curated essentials, delivered with care.'
+  const logoUrl = config?.logoUrl || `${SITE_URL}/logo512.png`
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {config?.primaryColor && (
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+                :root {
+                  --lagoon: ${config.primaryColor};
+                  --lagoon-deep: ${config.primaryColor};
+                  --lagoon-tint: color-mix(in srgb, ${config.primaryColor} 15%, transparent);
+                }
+              `,
+            }}
+          />
+        )}
       </head>
       <body>
         <StorefrontApp>
@@ -108,18 +143,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               '@graph': [
                 {
                   '@type': 'Organization',
-                  name: APP_TITLE,
+                  name: title,
                   url: SITE_URL,
-                  logo: `${SITE_URL}/logo512.png`,
-                  description:
-                    'Curated essentials, delivered with care.',
+                  logo: logoUrl,
+                  description: description,
                 },
                 {
                   '@type': 'WebSite',
-                  name: APP_TITLE,
+                  name: title,
                   url: SITE_URL,
-                  description:
-                    'Curated essentials, delivered with care.',
+                  description: description,
                   potentialAction: {
                     '@type': 'SearchAction',
                     target: {

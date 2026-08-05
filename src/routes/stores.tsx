@@ -18,24 +18,25 @@ import { useT } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
 
 export const Route = createFileRoute('/stores')({
-  head: () => ({
-    meta: [
-      { title: `Our Stores — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Visit our physical stores. Find store locations, working hours, and contact information.',
-      },
-      { property: 'og:title', content: `Our Stores — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Visit our physical stores. Find store locations, working hours, and contact information.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/stores` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/stores` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `Our Stores — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Visit our physical stores. Find store locations, working hours, and contact information.',
+        },
+        { property: 'og:title', content: `Our Stores — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Visit our physical stores. Find store locations, working hours, and contact information.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/stores` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/stores` }],
+    }
+  },
   component: StoresPage,
 })
 

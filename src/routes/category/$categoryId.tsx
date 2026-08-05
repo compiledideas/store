@@ -22,15 +22,9 @@ import {
 import { Pagination } from '#/components/storefront/pagination'
 import { ProductGrid } from '#/components/storefront/product-grid'
 import { SortSelect } from '#/components/storefront/sort-select'
-import {
-  ShopFilters
-   
-} from '#/components/storefront/shop-filters'
-import type {ShopFiltersState} from '#/components/storefront/shop-filters';
-import {
-  EmptyState,
-  GridSkeleton,
-} from '#/components/storefront/states'
+import { ShopFilters } from '#/components/storefront/shop-filters'
+import type { ShopFiltersState } from '#/components/storefront/shop-filters'
+import { EmptyState, GridSkeleton } from '#/components/storefront/states'
 import { useT, interpolate  } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
 import { formatCount } from '#/lib/format'
@@ -71,14 +65,15 @@ export const Route = createFileRoute('/category/$categoryId')({
       return { category: null }
     }
   },
-  head: ({ loaderData, params }) => {
+  head: ({ loaderData, params, match }) => {
     const category = loaderData?.category
+    const siteName = match.context.config?.name || APP_TITLE
     return {
       meta: [
         {
           title: category
-            ? `${category.name} — ${APP_TITLE}`
-            : `Category — ${APP_TITLE}`,
+            ? `${category.name} — ${siteName}`
+            : `Category — ${siteName}`,
         },
         {
           name: 'description',
@@ -89,8 +84,8 @@ export const Route = createFileRoute('/category/$categoryId')({
         {
           property: 'og:title',
           content: category
-            ? `${category.name} — ${APP_TITLE}`
-            : `Category — ${APP_TITLE}`,
+            ? `${category.name} — ${siteName}`
+            : `Category — ${siteName}`,
         },
         {
           property: 'og:description',

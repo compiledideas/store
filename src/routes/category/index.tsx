@@ -9,24 +9,25 @@ import { useT } from '#/lib/i18n'
 import { APP_TITLE, SITE_URL } from '#/env'
 
 export const Route = createFileRoute('/category/')({
-  head: () => ({
-    meta: [
-      { title: `Categories — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Browse products by category. Find the perfect item from our curated collection.',
-      },
-      { property: 'og:title', content: `Categories — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Browse products by category. Find the perfect item from our curated collection.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/category` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/category` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `Categories — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Browse products by category. Find the perfect item from our curated collection.',
+        },
+        { property: 'og:title', content: `Categories — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Browse products by category. Find the perfect item from our curated collection.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/category` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/category` }],
+    }
+  },
   component: CategoryIndexPage,
 })
 

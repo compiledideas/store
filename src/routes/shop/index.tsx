@@ -19,11 +19,8 @@ import {
 import { Pagination } from '#/components/storefront/pagination'
 import { ProductGrid } from '#/components/storefront/product-grid'
 import { SortSelect } from '#/components/storefront/sort-select'
-import {
-  ShopFilters
-   
-} from '#/components/storefront/shop-filters'
-import type {ShopFiltersState} from '#/components/storefront/shop-filters';
+import { ShopFilters } from '#/components/storefront/shop-filters'
+import type { ShopFiltersState } from '#/components/storefront/shop-filters'
 import {
   EmptyState,
   GridSkeleton,
@@ -51,24 +48,25 @@ type ShopSearch = z.infer<typeof searchSchema>
 
 export const Route = createFileRoute('/shop/')({
   validateSearch: searchSchema,
-  head: () => ({
-    meta: [
-      { title: `Shop — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Browse our full collection of products. Filter by category, price, gender, and more to find exactly what you need.',
-      },
-      { property: 'og:title', content: `Shop — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Browse our full collection of products. Filter by category, price, gender, and more.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/shop` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/shop` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `Shop — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Browse our full collection of products. Filter by category, price, gender, and more to find exactly what you need.',
+        },
+        { property: 'og:title', content: `Shop — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Browse our full collection of products. Filter by category, price, gender, and more.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/shop` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/shop` }],
+    }
+  },
   component: ShopPage,
 })
 

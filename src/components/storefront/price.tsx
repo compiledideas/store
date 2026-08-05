@@ -1,4 +1,4 @@
-import { formatPrice } from '#/lib/format'
+import { useFormatPrice } from '#/lib/format'
 import { cn } from '#/lib/utils'
 
 /** Price with optional struck-through old price and a sale colour. */
@@ -17,6 +17,7 @@ export function Price({
   showFrom?: boolean
   fromLabel?: string
 }) {
+  const formatPrice = useFormatPrice()
   const sizes = {
     sm: 'text-sm',
     md: 'text-base',

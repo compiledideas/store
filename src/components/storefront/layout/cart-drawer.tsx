@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { ShoppingBagIcon, Trash2Icon } from 'lucide-react'
-import { useStorefrontCart } from '@rackvise/storefront-sdk'
+import { useStorefrontCart, useStorefrontConfig } from '@rackvise/storefront-sdk'
 
 import {
   Sheet,
@@ -15,14 +15,13 @@ import { Price } from '../price'
 import { QuantityStepper } from '../quantity-stepper'
 import { EmptyState } from '../states'
 import {
-  formatPrice,
+  useFormatPrice,
   primaryImage,
   resolveStock,
   resolveUnitPrice,
 } from '#/lib/format'
 import { interpolate, useT } from '#/lib/i18n'
 import { useUi } from '#/lib/ui-store'
-import { FREE_SHIP_THRESHOLD } from '#/lib/cart-config'
 
 export function CartDrawer() {
   const t = useT()
@@ -35,16 +34,19 @@ export function CartDrawer() {
     updateQuantity,
     removeFromCart,
   } = useStorefrontCart()
+  const { data: config } = useStorefrontConfig()
+  const formatPrice = useFormatPrice()
 
   const goCheckout = () => {
     closeCart()
     navigate({ to: '/checkout' })
   }
 
-  const remaining = Math.max(0, FREE_SHIP_THRESHOLD - subtotal)
+  const freeShipThreshold = config?.freeShippingThreshold ?? 80
+  const remaining = Math.max(0, freeShipThreshold - subtotal)
   const progress = Math.min(
     100,
-    subtotal <= 0 ? 0 : (subtotal / FREE_SHIP_THRESHOLD) * 100,
+    subtotal <= 0 ? 0 : (subtotal / freeShipThreshold) * 100,
   )
 
   return (

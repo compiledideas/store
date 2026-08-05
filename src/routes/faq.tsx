@@ -15,24 +15,25 @@ import { APP_TITLE, SITE_URL } from '#/env'
 import { Markdown } from '#/components/storefront/markdown'
 
 export const Route = createFileRoute('/faq')({
-  head: () => ({
-    meta: [
-      { title: `FAQ — ${APP_TITLE}` },
-      {
-        name: 'description',
-        content:
-          'Find answers to frequently asked questions about ordering, shipping, payments, and more.',
-      },
-      { property: 'og:title', content: `FAQ — ${APP_TITLE}` },
-      {
-        property: 'og:description',
-        content:
-          'Find answers to frequently asked questions about ordering, shipping, payments, and more.',
-      },
-      { property: 'og:url', content: `${SITE_URL}/faq` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/faq` }],
-  }),
+  head: ({ match }) => {
+    const siteName = match.context.config?.name || APP_TITLE
+    return {
+      meta: [
+        { title: `FAQ — ${siteName}` },
+        {
+          name: 'description',
+          content: 'Find answers to frequently asked questions about ordering, shipping, payments, and more.',
+        },
+        { property: 'og:title', content: `FAQ — ${siteName}` },
+        {
+          property: 'og:description',
+          content: 'Find answers to frequently asked questions about ordering, shipping, payments, and more.',
+        },
+        { property: 'og:url', content: `${SITE_URL}/faq` },
+      ],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/faq` }],
+    }
+  },
   component: FaqPage,
 })
 
