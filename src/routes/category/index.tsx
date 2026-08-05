@@ -53,7 +53,7 @@ function CategoryIndexPage() {
       ) : !data || data.length === 0 ? (
         <EmptyState
           icon="box"
-          title={t.shop.noResults}
+          title={t.states.searchEmpty}
           action={
             <Button asChild>
               <Link to="/shop">{t.actions.backToShop}</Link>

@@ -46,7 +46,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     const config = match.context.config
     const title = config?.name || APP_TITLE
     const description = config?.taglineEN || 'Curated essentials, delivered with care. Shop our collection of products with cash on delivery available.'
-    const logoUrl = config?.logoUrl || `${SITE_URL}/logo512.png`
+    const logoUrl = config?.logoUrl || '/favicon.ico'
+    const ogImage = config?.logoUrl || `${SITE_URL}/logo512.png`
     return {
       meta: [
         { charSet: 'utf-8' },
@@ -64,7 +65,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: SITE_URL },
-        { property: 'og:image', content: logoUrl },
+        { property: 'og:image', content: ogImage },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: title },
         {
@@ -73,6 +74,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         },
       ],
       links: [
+        { rel: 'icon', href: logoUrl },
+        { rel: 'apple-touch-icon', href: ogImage },
         { rel: 'stylesheet', href: appCss },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         {

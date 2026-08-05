@@ -53,7 +53,7 @@ function PromoIndexPage() {
       ) : isError ? (
         <ErrorState onRetry={() => refetch()} />
       ) : !data || data.length === 0 ? (
-        <SectionHeading title={t.shop.noResults} />
+        <SectionHeading title={t.states.searchEmpty} />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.map((promo) => (

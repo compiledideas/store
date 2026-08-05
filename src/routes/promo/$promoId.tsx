@@ -86,8 +86,8 @@ function PromoDetailPage() {
     return (
       <EmptyState
         icon="box"
-        title={t.shop.noResults}
-        description={t.home.joinSub}
+        title={t.states.error}
+        description={t.states.errorSub}
       />
     )
   if (!promo)
@@ -127,7 +127,7 @@ function PromoDetailPage() {
       {promo.products.length > 0 ? (
         <ProductGrid items={promo.products} />
       ) : (
-        <EmptyState icon="box" title={t.shop.noResults} />
+        <EmptyState icon="box" title={t.states.searchEmpty} />
       )}
     </div>
   )

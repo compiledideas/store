@@ -212,8 +212,8 @@ function ShopPage() {
           ) : isError ? (
             <EmptyState
               icon="box"
-              title={t.shop.noResults}
-              description={t.home.joinSub}
+              title={t.states.error}
+              description={t.states.errorSub}
             />
           ) : !data || data.data.length === 0 ? (
             <EmptyState

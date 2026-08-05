@@ -5,9 +5,8 @@ import {
   useEffect,
   useMemo,
   useState
-  
 } from 'react'
-import type {ReactNode} from 'react';
+import type { ReactNode } from 'react'
 
 export type Locale = 'en' | 'fr' | 'ar'
 
@@ -29,7 +28,7 @@ export const dictionaries = {
     brand: {
       tagline: 'Curated essentials, delivered with care',
       announcement:
-        'Free shipping on orders over 80 DH — Cash on delivery available',
+        'Free delivery on orders over 80 DH — Easy returns within 14 days',
     },
     nav: {
       home: 'Home',
@@ -190,7 +189,7 @@ export const dictionaries = {
     brand: {
       tagline: "L'essentiel, livré avec soin",
       announcement:
-        'Livraison gratuite dès 80 DH — Paiement à la livraison disponible',
+        'Livraison gratuite dès 80 DH — Retours faciles sous 14 jours',
     },
     nav: {
       home: 'Accueil',
@@ -351,7 +350,7 @@ export const dictionaries = {
   ar: {
     brand: {
       tagline: 'أساسيات مختارة بعناية، تُسلَّم بعناية',
-      announcement: 'شحن مجاني للطلبات فوق ٨٠ د.م. — الدفع عند الاستلام متاح',
+      announcement: 'شحن مجاني للطلبات فوق ٨٠ د.م. — إرجاع سهل خلال ١٤ يوما',
     },
     nav: {
       home: 'الرئيسية',
